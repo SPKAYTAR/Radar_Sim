@@ -39,7 +39,6 @@ plt.show(block=False)
 plt.pause(0.1)
 
 successive_interference_cancelation(decoded1,decoded2,radar)
-for x in targets:
-    print(x)
+print("Done")
 plt.show()
 

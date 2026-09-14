@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 import cmath
 from Simulate import simulate_chirp
-
+from target import targets
 # def DFT(arr,radar):
 #      #increments of .5
 #      data = np.array(arr, dtype=complex).copy()
@@ -115,7 +115,7 @@ def successive_interference_cancelation(arr1, arr2, radar): #arrays are decoded,
         if len(peaks1) == 0 or len(peaks2) == 0:
             break
         #Minimum wave amplitude to continue
-        if peaks1[0][1] < 0.00001:
+        if peaks1[0][1] < 0.0004:
             break
 
         # Targeted beat
@@ -152,7 +152,20 @@ def successive_interference_cancelation(arr1, arr2, radar): #arrays are decoded,
        # Average the two power/RCS estimates
         rcs = (rcs1 + rcs2) / 2
 
-        print("Corrected Target ", num, ":", d1, v1, rcs)
+        distance_error = abs((d1 - targets[num-1][0]) / targets[num-1][0]) * 100
+
+        if targets[num-1][1] != 0:
+            velocity_error = abs((v1 - targets[num-1][1]) / targets[num-1][1]) * 100
+        else:
+            velocity_error = abs(v1)  # report m/s error instead
+
+        rcs_error = abs((rcs - targets[num-1][2]) / targets[num-1][2]) * 100
+
+        print(
+            "Calculated Target", num, ":", f"{d1:.2f}", f"{v1:.2f}", f"{rcs:.2f}",
+            "Real Target:", targets[num-1],
+            "Error:", f"{distance_error:.2f}", f"{velocity_error:.2f}", f"{rcs_error:.2f}"
+        )
         #Corrected Target
         target_estimate = [(d1, v1, rcs)]
         # Cancel +S chirp
